@@ -48,24 +48,44 @@ public class InputController(DataContext context)
                     break;
 
                 case 2:
+
                     Console.WriteLine("Top 5 Cereals are:");
-                    /* 
-                    {1.} place is {name} prodused by {mfr} with rating of {rating rounded}.
-                     */
+
+                    var topCereals = _context.Cereals
+                    .OrderByDescending(cereal => cereal.Rating) // Sort by rating in descending order
+                    .Take(5) // Get top 5
+                    .Select((cereal, index) => new
+                    {
+                        Rank = index + 1,
+                        Name = cereal.Name,
+                        Manufacturer = Manufacturers[cereal.Mfr],
+                        Rating = Math.Round(cereal.Rating, 1) // Round rating to 1 decimal place DOEEEESSSSNNNNN WORK ..Tomorrow's problem
+                    });
+
+                    foreach (var cereal in topCereals)
+                    {
+                        Console.WriteLine($"{cereal.Rank}. place is {cereal.Name} produced by {cereal.Manufacturer} with a rating of {cereal.Rating}.");
+                    }
+
+
+                    foreach (var cereal in _context.Cereals)
+                    {
+                        Console.WriteLine($"{cereal.Name}: Raw Rating = {cereal.Rating}");
+                    }
+
+
+
                     break;
 
                 case 3:
-                    Console.WriteLine("These ones you should warm up before eating:");
-                    Console.WriteLine($"There are {_context.Cereals.Where(cereal => cereal.Type == 'H').Count()}");
+                    Console.WriteLine("These ones you should warm up before eating!");
+                    Console.WriteLine($"There are {_context.Cereals.Where(cereal => cereal.Type == 'H').Count()} in total:");
 
                     foreach (var cereal in _context.Cereals.Where(cereal => cereal.Type == 'H'))
                     {
-                        Console.WriteLine($"- {cereal.Name} produced by {cereal.Mfr}.");
+                        char mfrKey = cereal.Mfr;
+                        Console.WriteLine($"- {cereal.Name} produced by {Manufacturers[cereal.Mfr]}.");
                     }
-                    /* 
-                    foreach Type = "H" 
-                    print - {name} prodused by {mfr}.
-                     */
                     break;
 
                 case 4:
