@@ -1,4 +1,6 @@
-﻿namespace Cereals;
+﻿// data collected from: https://www.kaggle.com/datasets/crawford/80-cereals
+
+namespace Cereals;
 using Cereals.Models;
 using Cereals.Controller;
 

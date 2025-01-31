@@ -4,6 +4,8 @@ namespace Cereals.Models;
 
 public class CerealData
 {
+    // Didn't use Shelf, Weight or Cups, since didn't see use for that.
+    // Also dropped ... , because in overall all are numbers and would be the same methods. 
     public string Name { get; set; }
     public char Mfr { get; set; }
     public char Type { get; set; }
@@ -16,9 +18,6 @@ public class CerealData
     public double Sugars { get; set; }
     public double Potass { get; set; }
     public double Vitamins { get; set; }
-    public double Shelf { get; set; }
-    public double Weight { get; set; }
-    public double Cups { get; set; }
     public double Rating { get; set; }
 
     // Here we create a constructor, which will create a CerealData object.
@@ -63,15 +62,6 @@ public class CerealData
         if (double.TryParse(values[11], out double vitamins))
             Vitamins = vitamins;
 
-        if (double.TryParse(values[12], out double shelf))
-            Shelf = shelf;
-
-        if (double.TryParse(values[13], out double weight))
-            Weight = weight;
-
-        if (double.TryParse(values[14], out double cups))
-            Cups = cups;
-
         if (double.TryParse(values[15], out double rating))
             Rating = rating;
 
@@ -79,4 +69,6 @@ public class CerealData
 
 
     }
+    
+
 }

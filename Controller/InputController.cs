@@ -13,14 +13,20 @@ public class InputController(DataContext context)
 
     public void Run()
     {
+        Console.Clear();
         while (isRunning)
         {
+
             Console.WriteLine("Here are the controls:");
-            Console.WriteLine("1:How many squirrels are tracked?");
-            Console.WriteLine("2:How many squirrels twitch their tails?");
-            Console.WriteLine("3:How many are Adults?");
-            Console.WriteLine("4:Make a more complicated Query");
-            Console.WriteLine("5: exit program");
+            Console.WriteLine("1: Which manufacturers are represented?");
+            Console.WriteLine("2: Which are the Top 5 Cereals by consumer reports?");
+            Console.WriteLine("3: Did you know that there are cereals served hot?");
+            Console.WriteLine("4: Top 3 with most and least amount of calories per serving.");
+            Console.WriteLine("\nNeed help with choosing right cereal?");
+            Console.WriteLine("5: Sort by vitamins and proteins.");
+            Console.WriteLine("6: Sort by Manufacturer, grams of fiber and carbohydrates.");
+            Console.WriteLine("7: ...exit program");
+
             var input = Console.ReadLine();
             int command;
 
@@ -34,11 +40,79 @@ public class InputController(DataContext context)
             switch (command)
             {
                 case 1:
-                    Console.WriteLine("Coming soon");
+                    Console.WriteLine($"In total there are {Manufacturers.Count} manufacturers:");
+                    foreach (var manu in Manufacturers)
+                    {
+                        Console.WriteLine($"\t- {manu.Value}");
+                    }
                     break;
+
                 case 2:
-                    Console.WriteLine("Coming soon");
+                    Console.WriteLine("Top 5 Cereals are:");
+                    /* 
+                    {1.} place is {name} prodused by {mfr} with rating of {rating rounded}.
+                     */
                     break;
+
+                case 3:
+                    Console.WriteLine("These ones you should warm up before eating:");
+                    Console.WriteLine($"There are {_context.Cereals.Where(cereal => cereal.Type == 'H').Count()}");
+
+                    foreach (var cereal in _context.Cereals.Where(cereal => cereal.Type == 'H'))
+                    {
+                        Console.WriteLine($"- {cereal.Name} produced by {cereal.Mfr}.");
+                    }
+                    /* 
+                    foreach Type = "H" 
+                    print - {name} prodused by {mfr}.
+                     */
+                    break;
+
+                case 4:
+                    Console.WriteLine("Top 3 with the biggest amount of calories per serving.");
+                    /* 
+                    {1.} place is {name} prodused by {mfr} with {calories}.
+                     */
+
+                    Console.WriteLine("Top 3 with the smallest amount of calories per serving.");
+                    /* 
+                    {1.} place is {name} prodused by {mfr} with {calories}.
+                     */
+
+                    break;
+
+                case 5:
+                    Console.WriteLine("");
+
+                    /* 
+                    var query = QueryBuilder();
+                    1. Do you need to increase your intake of vitamins and minerals?
+                        y / n
+                        if no => vitamims = 0
+                        if yes => Is it your only way to intake vitamins and minerals?
+                            if yes = vitamims = 100
+                            if no = vitamims = 25
+                    2. How many grams of protein do you want to intake (1-6)? 
+
+
+                       Console.WriteLine("Here comes the results of your query:");
+                     */
+
+                    break;
+
+                case 6:
+                    Console.WriteLine("");
+
+                    /* 
+                    by manufacturer
+                    by fiber grams
+                        get average as middle point? => above vs below?
+                        same with carbo 
+                     need to involve sugars? 
+                     */
+                    break;
+
+
 
                 /* 
                 case 4: 
@@ -83,4 +157,15 @@ public class InputController(DataContext context)
         }
         return queryStart;
     } */
+
+    Dictionary<char, string> Manufacturers = new Dictionary<char, string>
+        {
+            {'A', "American Home Food Products"},
+            {'G', "General Mills"},
+            {'K', "Kelloggs"},
+            {'N', "Nabisco"},
+            {'P', "Post"},
+            {'Q', "Quaker Oats"},
+            {'R', "Ralston Purina"}
+        };
 }
