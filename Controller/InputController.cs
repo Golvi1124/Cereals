@@ -47,38 +47,32 @@ public class InputController(DataContext context)
                     }
                     break;
 
-                case 2: // Which are the Top 5 Cereals ...DOEEEESSSSNNNNN WORK ..Tomorrow's problem
+                case 2: // Which are the Top 5 Cereals ✔
 
                     Console.WriteLine("Top 5 Cereals are:");
 
                     var topCereals = _context.Cereals
-                    .OrderByDescending(cereal => cereal.Rating) // Sort by rating in descending order
-                    .Take(5) // Get top 5
-                    .Select((cereal, index) => new
-                    {
-                        Rank = index + 1,
-                        Name = cereal.Name,
-                        Manufacturer = Manufacturers[cereal.Mfr],
-                        Rating = cereal.Rating, //...to do: Round rating to 1 decimal place 
-                    });
+                                            .OrderByDescending(cereal => cereal.Rating)
+                                            .Take(5)
+                                            .ToList() // Force execution here
+                                            .Select((cereal, index) => new
+                                            {
+                                                Rank = index + 1,
+                                                Name = cereal.Name,
+                                                Manufacturer = Manufacturers[cereal.Mfr],
+                                                Rating = Math.Round(cereal.Rating, 1), // Round rating
+                                            });
+
 
                     foreach (var cereal in topCereals)
                     {
                         Console.WriteLine($"{cereal.Rank}. place is {cereal.Name} produced by {cereal.Manufacturer} with a rating of {cereal.Rating}.");
                     }
 
-
-                    /* foreach (var cereal in _context.Cereals)
-                    {
-                        Console.WriteLine($"{cereal.Name}: Raw Rating = {cereal.Rating}");
-                    }
- */
-
-
                     break;
 
                 case 3: // cereals served hot ✔
-                   
+
                     Console.WriteLine("These ones you should warm up before eating!");
                     Console.WriteLine($"There are {_context.Cereals.Where(cereal => cereal.Type == 'H').Count()} in total:");
 
@@ -90,9 +84,9 @@ public class InputController(DataContext context)
                     break;
 
                 case 4: // Top 3 with most and least amount of calories
-                
-                var lines = File.ReadAllLines(@"cereal.csv");
-                var count = lines.Length;
+
+                    var lines = File.ReadAllLines(@"cereal.csv");
+                    var count = lines.Length;
                     Console.WriteLine($"In total there are {count} cereals represented and from them:");
 
 

@@ -1,4 +1,5 @@
 using System;
+using System.Globalization;
 
 namespace Cereals.Models;
 
@@ -35,40 +36,36 @@ public class CerealData
         if (char.TryParse(values[2], out char type))
             Type = type;
 
-        if (double.TryParse(values[3], out double calories))
+        if (double.TryParse(values[3], CultureInfo.InvariantCulture, out double calories))
             Calories = calories;
 
-        if (double.TryParse(values[4], out double protein))
+        if (double.TryParse(values[4], CultureInfo.InvariantCulture, out double protein))
             Protein = protein;
 
-        if (double.TryParse(values[5], out double fat))
+        if (double.TryParse(values[5], CultureInfo.InvariantCulture, out double fat))
             Fat = fat;
 
-        if (double.TryParse(values[6], out double sodium))
+        if (double.TryParse(values[6], CultureInfo.InvariantCulture, out double sodium))
             Sodium = sodium;
 
-        if (double.TryParse(values[7], out double fiber))
+        if (double.TryParse(values[7], CultureInfo.InvariantCulture, out double fiber))
             Fiber = fiber;
 
-        if (double.TryParse(values[8], out double carbo))
+        if (double.TryParse(values[8], CultureInfo.InvariantCulture, out double carbo))
             Carbo = carbo;
 
-        if (double.TryParse(values[9], out double sugars))
+        if (double.TryParse(values[9], CultureInfo.InvariantCulture, out double sugars))
             Sugars = sugars;
 
-        if (double.TryParse(values[10], out double potass))
+        if (double.TryParse(values[10], CultureInfo.InvariantCulture, out double potass))
             Potass = potass;
 
-        if (double.TryParse(values[11], out double vitamins))
+        if (double.TryParse(values[11], CultureInfo.InvariantCulture, out double vitamins))
             Vitamins = vitamins;
 
-        if (double.TryParse(values[15], out double rating))
+        if (double.TryParse(values[15], CultureInfo.InvariantCulture, out double rating))
             Rating = rating;
 
-
-
-
     }
-    
 
 }
