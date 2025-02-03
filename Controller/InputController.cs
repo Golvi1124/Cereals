@@ -21,7 +21,7 @@ public class InputController(DataContext context)
             Console.WriteLine("1: Which manufacturers are represented?");
             Console.WriteLine("2: Which are the Top 5 Cereals by consumer reports?");
             Console.WriteLine("3: Did you know that there are cereals served hot?");
-            Console.WriteLine("4: Top 3 with most and least amount of calories per serving.");
+            Console.WriteLine("4: Top 5 with most and least amount of calories per serving.");
             Console.WriteLine("\nNeed help with choosing right cereal?");
             Console.WriteLine("5: Sort by vitamins and proteins.");
             Console.WriteLine("6: Sort by Manufacturer, grams of fiber and carbohydrates.");
@@ -58,7 +58,7 @@ public class InputController(DataContext context)
                                             .Select((cereal, index) => new
                                             {
                                                 Rank = index + 1,
-                                                Name = cereal.Name,
+                                                cereal.Name,
                                                 Manufacturer = Manufacturers[cereal.Mfr],
                                                 Rating = Math.Round(cereal.Rating, 1), // Round rating
                                             });
@@ -83,69 +83,81 @@ public class InputController(DataContext context)
                     }
                     break;
 
-                case 4: // Top 3 with most and least amount of calories
+                case 4: // Top 5 with most and least amount of calories ✔
 
                     var lines = File.ReadAllLines(@"cereal.csv");
                     var count = lines.Length;
                     Console.WriteLine($"In total there are {count} cereals represented and from them:");
 
 
-                    Console.WriteLine("Top 3 with the biggest amount of calories per serving.");
-                    /* 
-                    {1.} place is {name} prodused by {mfr} with {calories}.
-                     */
+                    Console.WriteLine("- Top 5 with the biggest amount of calories per serving:");
 
-                    Console.WriteLine("Top 3 with the smallest amount of calories per serving.");
-                    /* 
-                    {1.} place is {name} prodused by {mfr} with {calories}.
-                     */
+                    var topUpCereals = _context.Cereals
+                                            .OrderByDescending(cereal => cereal.Calories)
+                                            .Take(5)
+                                            .ToList() // Force execution here
+                                            .Select((cereal, index) => new
+                                            {
+                                                Rank = index + 1,
+                                                cereal.Name,
+                                                Manufacturer = Manufacturers[cereal.Mfr],
+                                                cereal.Calories,
+                                            });
+
+
+                    foreach (var cereal in topUpCereals)
+                    {
+                        Console.WriteLine($"\t{cereal.Rank}. place is {cereal.Name} produced by {cereal.Manufacturer} with a calory count of {cereal.Calories}.");
+                    }
+
+                    Console.WriteLine("- Top 5 with the smallest amount of calories per serving:");
+                    var topDownCereals = _context.Cereals
+                                             .OrderBy(cereal => cereal.Calories)
+                                             .Take(5)
+                                             .ToList() // Force execution here
+                                             .Select((cereal, index) => new
+                                             {
+                                                 Rank = index + 1,
+                                                 cereal.Name,
+                                                 Manufacturer = Manufacturers[cereal.Mfr],
+                                                 cereal.Calories,
+                                             });
+
+
+                    foreach (var cereal in topDownCereals)
+                    {
+                        Console.WriteLine($"\t{cereal.Rank}. place is {cereal.Name} produced by {cereal.Manufacturer} with a calory count of {cereal.Calories}.");
+                    }
 
                     break;
 
                 case 5: // Sort by vitamins and proteins.
-                    Console.WriteLine("");
+                    Console.WriteLine("Here you will be able to choose cereals by Vitamin and Protein amounts.");
 
-                    /* 
-                    var query = QueryBuilder();
-                    1. Do you need to increase your intake of vitamins and minerals?
-                        y / n
-                        if no => vitamims = 0
-                        if yes => Is it your only way to intake vitamins and minerals?
-                            if yes = vitamims = 100
-                            if no = vitamims = 25
-                    2. How many grams of protein do you want to intake (1-6)? 
+                    var query = QueryVitaPro();
+                    Console.WriteLine("\nHere comes the results of your query:");
+                    Console.WriteLine($"We found {query.Count()} matches.");
 
-
-                       Console.WriteLine("Here comes the results of your query:");
-                     */
+                    foreach (var cereal in query)
+                    {
+                        Console.WriteLine($"\t- {cereal.Name}. Also known to have {cereal.Fat} g of Fat and {cereal.Sodium} mg of Sodium");
+                    }
 
                     break;
 
                 case 6: // Sort by Manufacturer, grams of fiber and carbohydrates.
-                    Console.WriteLine("");
+                    Console.WriteLine("Here you will be able to choose cereals by Manufacturer, Fiber and Carbohydrate amounts.");
 
-                    /* 
-                    by manufacturer
-                    by fiber grams
-                        get average as middle point? => above vs below?
-                        same with carbo 
-                     need to involve sugars? 
-                     */
+                    var query2 = QueryManuFiCa();
+                    Console.WriteLine("\nHere comes the results of your query:");
+                    Console.WriteLine($"We found {query2.Count()} matches.");
+
+                    foreach (var cereal in query2)
+                    {
+                        Console.WriteLine($"\t- {cereal.Name}. Also known to have {cereal.Sugars} g of Sugars and {cereal.Potass} mg of Potass");
+                    }
+
                     break;
-
-
-
-                /* 
-                case 4: 
-                                    var query = QueryBuilder();
-                                    Console.WriteLine("Here comes the results of your query:");
-                                    Console.WriteLine($"We found {query.Count()} squirrels.");
-                                    foreach (var squirrel in query)
-                                    {
-                                        Console.WriteLine($"Squirrel with id {squirrel.SquirrelId} is an {squirrel.Age}, it's fur color is {squirrel.PrimaryFurColor}.");
-                                    }
-                                    break;
-                 */
 
 
                 default:
@@ -155,30 +167,63 @@ public class InputController(DataContext context)
         }
     }
 
-    /* Here we have a method where we create a LinQ interface, which will eventually "consume" and display a result to the user.
-    We see again here that we can "chain" the methods as much as we want to see if the user wants to query against Age, 
-    against PrimaryFurColor or both, or neither. */
 
-    /* 
-    public IQueryable<SquirrelData> QueryBuilder()
+
+
+
+    public IQueryable<CerealData> QueryVitaPro()
     {
-        var queryStart = _context.Squirrels.AsQueryable();
-        
-        Console.WriteLine("Type an age you want to query by, or press enter to skip.");
-        string ageinput = Console.ReadLine();
-        if (!string.IsNullOrEmpty(ageinput))
-        {
-            queryStart = queryStart.Where(s => string.Equals(s.Age, ageinput, StringComparison.InvariantCultureIgnoreCase));
-        }
-        Console.WriteLine("Type a fur color you want to query by, or press enter to skip");
-        string furinput = Console.ReadLine();
-        if (!string.IsNullOrEmpty(furinput))
-        {
-            queryStart = queryStart.Where(s => string.Equals(s.PrimaryFurColor, furinput, StringComparison.InvariantCultureIgnoreCase));
-        }
-        return queryStart;
-    } */
+        var queryStart = _context.Cereals.AsQueryable();
 
+        Console.WriteLine("Following the typical percentage of FDA recommended, enter:");
+        Console.WriteLine("\t0 - if not looking for extra vitamin intake.\n\t25 - if your vitamin intake is normal.\n\t100 - if it's your only vitamin intake.\n\t...or press enter to skip.");
+        string vitaminIntake = Console.ReadLine();
+        if (!string.IsNullOrEmpty(vitaminIntake) && double.TryParse(vitaminIntake, out double vitaminIn))
+        {
+            queryStart = queryStart.Where(s => s.Vitamins == vitaminIn);
+        }
+
+        Console.WriteLine($"How many grams of protein do you want to intake? Min: {_context.Cereals.Min(c => c.Protein)}, Max: {_context.Cereals.Max(c => c.Protein)} ?\n...or press enter to skip.");
+        string proteinIntake = Console.ReadLine();
+        if (!String.IsNullOrEmpty(proteinIntake) && double.TryParse(proteinIntake, out double proteinIn))
+        {
+            queryStart = queryStart.Where(s => s.Protein == proteinIn);
+        }
+
+        return queryStart;
+    }
+
+    public IQueryable<CerealData> QueryManuFiCa()
+    {
+        var queryStart = _context.Cereals.AsQueryable();
+        // Manufacturer
+        Console.WriteLine("Start with choosing Manufacturer. Type in corresponding letter from list below.");
+        foreach (var manu in Manufacturers)
+        {
+            Console.WriteLine($"\t{manu.Key} = {manu.Value}");
+        }
+        string manuInput = Console.ReadLine();
+
+        if (!string.IsNullOrEmpty(manuInput) && manuInput.Length == 1) // Ensure a single character was entered
+        {
+            char manuChar = manuInput[0]; // Extract the first character
+            queryStart = queryStart.Where(s => s.Mfr == manuChar);
+        }
+
+        // Fiber grams
+        Console.WriteLine("How many grams of Fiber do you want to intake?");
+        Console.WriteLine($"Dataset has range from {_context.Cereals.Min(c => c.Fiber)} to {_context.Cereals.Max(c => c.Fiber)}");
+
+//Dataset has range from 0 to 14
+
+        // Carbs grams of complex carbohydrates
+Console.WriteLine("How many grams of Carbohydrates do you want to intake?");
+        Console.WriteLine($"Dataset has range from {_context.Cereals.Min(c => c.Carbo)} to {_context.Cereals.Max(c => c.Carbo)}");
+
+//Dataset has range from 0 to 23
+
+        return queryStart;
+    }
     Dictionary<char, string> Manufacturers = new Dictionary<char, string>
         {
             {'A', "American Home Food Products"},
