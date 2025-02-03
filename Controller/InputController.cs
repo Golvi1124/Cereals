@@ -39,7 +39,7 @@ public class InputController(DataContext context)
 
             switch (command)
             {
-                case 1:
+                case 1: // Which manufacturers are represented? ✔
                     Console.WriteLine($"In total there are {Manufacturers.Count} manufacturers:");
                     foreach (var manu in Manufacturers)
                     {
@@ -47,7 +47,7 @@ public class InputController(DataContext context)
                     }
                     break;
 
-                case 2:
+                case 2: // Which are the Top 5 Cereals ...DOEEEESSSSNNNNN WORK ..Tomorrow's problem
 
                     Console.WriteLine("Top 5 Cereals are:");
 
@@ -59,7 +59,7 @@ public class InputController(DataContext context)
                         Rank = index + 1,
                         Name = cereal.Name,
                         Manufacturer = Manufacturers[cereal.Mfr],
-                        Rating = Math.Round(cereal.Rating, 1) // Round rating to 1 decimal place DOEEEESSSSNNNNN WORK ..Tomorrow's problem
+                        Rating = cereal.Rating, // Round rating to 1 decimal place 
                     });
 
                     foreach (var cereal in topCereals)
@@ -77,7 +77,8 @@ public class InputController(DataContext context)
 
                     break;
 
-                case 3:
+                case 3: // cereals served hot ✔
+                   
                     Console.WriteLine("These ones you should warm up before eating!");
                     Console.WriteLine($"There are {_context.Cereals.Where(cereal => cereal.Type == 'H').Count()} in total:");
 
@@ -88,7 +89,13 @@ public class InputController(DataContext context)
                     }
                     break;
 
-                case 4:
+                case 4: // Top 3 with most and least amount of calories
+                
+                var lines = File.ReadAllLines(@"cereal.csv");
+                var count = lines.Length;
+                    Console.WriteLine($"In total there are {count} cereals represented and from them:");
+
+
                     Console.WriteLine("Top 3 with the biggest amount of calories per serving.");
                     /* 
                     {1.} place is {name} prodused by {mfr} with {calories}.
@@ -101,7 +108,7 @@ public class InputController(DataContext context)
 
                     break;
 
-                case 5:
+                case 5: // Sort by vitamins and proteins.
                     Console.WriteLine("");
 
                     /* 
@@ -120,7 +127,7 @@ public class InputController(DataContext context)
 
                     break;
 
-                case 6:
+                case 6: // Sort by Manufacturer, grams of fiber and carbohydrates.
                     Console.WriteLine("");
 
                     /* 
