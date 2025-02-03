@@ -59,7 +59,7 @@ public class InputController(DataContext context)
                         Rank = index + 1,
                         Name = cereal.Name,
                         Manufacturer = Manufacturers[cereal.Mfr],
-                        Rating = cereal.Rating, // Round rating to 1 decimal place 
+                        Rating = cereal.Rating, //...to do: Round rating to 1 decimal place 
                     });
 
                     foreach (var cereal in topCereals)
@@ -68,11 +68,11 @@ public class InputController(DataContext context)
                     }
 
 
-                    foreach (var cereal in _context.Cereals)
+                    /* foreach (var cereal in _context.Cereals)
                     {
                         Console.WriteLine($"{cereal.Name}: Raw Rating = {cereal.Rating}");
                     }
-
+ */
 
 
                     break;
