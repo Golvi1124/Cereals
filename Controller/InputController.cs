@@ -71,7 +71,7 @@ public class InputController(DataContext context)
 
                     break;
 
-                case 3: // cereals served hot ✔
+                case 3: // Cereals served hot ✔
 
                     Console.WriteLine("These ones you should warm up before eating!");
                     Console.WriteLine($"There are {_context.Cereals.Where(cereal => cereal.Type == 'H').Count()} in total:");
@@ -131,7 +131,7 @@ public class InputController(DataContext context)
 
                     break;
 
-                case 5: // Sort by vitamins and proteins.
+                case 5: // Sort by vitamins and proteins. ✔
                     Console.WriteLine("Here you will be able to choose cereals by Vitamin and Protein amounts.");
 
                     var query = QueryVitaPro();
@@ -145,7 +145,7 @@ public class InputController(DataContext context)
 
                     break;
 
-                case 6: // Sort by Manufacturer and grams of fiber.
+                case 6: // Sort by Manufacturer and grams of fiber. ✔
                     Console.WriteLine("Here you will be able to choose cereals by Manufacturer and Fiber amounts.");
 
                     var query2 = QueryManuFiber();
@@ -158,7 +158,6 @@ public class InputController(DataContext context)
                     }
 
                     break;
-
 
                 default:
                     isRunning = false;
@@ -177,14 +176,14 @@ public class InputController(DataContext context)
 
         Console.WriteLine("Following the typical percentage of FDA recommended, enter:");
         Console.WriteLine("\t0 - if not looking for extra vitamin intake.\n\t25 - if your vitamin intake is normal.\n\t100 - if it's your only vitamin intake.\n\t...or press enter to skip.");
-        string vitaminIntake = Console.ReadLine();
+        string? vitaminIntake = Console.ReadLine();
         if (!string.IsNullOrEmpty(vitaminIntake) && double.TryParse(vitaminIntake, out double vitaminIn))
         {
             queryStart = queryStart.Where(s => s.Vitamins == vitaminIn);
         }
 
         Console.WriteLine($"How many grams of protein do you want to intake? Min: {_context.Cereals.Min(c => c.Protein)}, Max: {_context.Cereals.Max(c => c.Protein)} ?\n...or press enter to skip.");
-        string proteinIntake = Console.ReadLine();
+        string? proteinIntake = Console.ReadLine();
         if (!String.IsNullOrEmpty(proteinIntake) && double.TryParse(proteinIntake, out double proteinIn))
         {
             queryStart = queryStart.Where(s => s.Protein == proteinIn);
@@ -202,45 +201,55 @@ public class InputController(DataContext context)
         {
             Console.WriteLine($"\t{manu.Key} = {manu.Value}");
         }
-        string manuInput = Console.ReadLine();
 
-        if (!string.IsNullOrEmpty(manuInput) && manuInput.Length == 1) // Ensure a single character was entered
+        char manuChar;
+        while (true) // Keep asking until valid input is given
         {
-            char manuChar = manuInput[0]; // Extract the first character
-            queryStart = queryStart.Where(s => s.Mfr == manuChar);
+            Console.Write("Enter your choice: ");
+            string? manuInput = Console.ReadLine();
+
+
+            if (!string.IsNullOrEmpty(manuInput) && manuInput.Length == 1) // Ensure a single character was entered
+            {
+                manuChar = char.ToUpper(manuInput[0]); // Convert to uppercase
+
+                if (Manufacturers.ContainsKey(manuChar)) // Check if the key exists
+                {
+                    break; // Valid input, exit the loop
+                }
+
+            }
+            Console.WriteLine("Invalid input! Please enter a valid letter from the list.");
         }
+        queryStart = queryStart.Where(s => s.Mfr == manuChar);
+
 
         // Fiber grams
         Console.WriteLine("How many grams of Fiber do you want to intake?");
         Console.WriteLine($"Dataset has range from {_context.Cereals.Min(c => c.Fiber)} to {_context.Cereals.Max(c => c.Fiber)}");
-        Console.WriteLine("\tType 1 if looking for smaller amount.\n\tType 2 if looking for bigger amount.");
-        string fiberInput = Console.ReadLine();
 
 
 
-        if (!String.IsNullOrEmpty(fiberInput) && int.TryParse(fiberInput, out int choice))
+        while (true) // Keep asking until valid input is given
         {
-            if (choice == 1)
+            Console.WriteLine("\tType 1 if looking for smaller amount.\n\tType 2 if looking for bigger amount.");
+            string? fiberInput = Console.ReadLine();
+
+            if (!String.IsNullOrEmpty(fiberInput) && int.TryParse(fiberInput, out int choice))
             {
-                queryStart = queryStart.Where(c => c.Fiber >= 0 && c.Fiber <= 2);
+                if (choice == 1)
+                {
+                    queryStart = queryStart.Where(c => c.Fiber >= 0 && c.Fiber <= 2);
+                    break; // Exit loop after valid input
+                }
+                else if (choice == 2)
+                {
+                    queryStart = queryStart.Where(c => c.Fiber > 2);
+                    break;
+                }
             }
-            else if (choice == 2)
-            {
-                queryStart = queryStart.Where(c => c.Fiber > 2);
-            }
-            else
-            {
-                Console.WriteLine("Invalid input. Please enter 1 or 2.");
-            }
+            Console.WriteLine("Invalid input. Please enter 1 or 2."); // Error message, loop continues
         }
-
-        //Dataset has range from 0 to 14
-        // small 0-2 , big 3-14 to have more options
-
-
-
-
-
 
         return queryStart;
     }
