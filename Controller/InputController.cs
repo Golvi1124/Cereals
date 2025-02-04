@@ -145,10 +145,10 @@ public class InputController(DataContext context)
 
                     break;
 
-                case 6: // Sort by Manufacturer, grams of fiber and carbohydrates.
-                    Console.WriteLine("Here you will be able to choose cereals by Manufacturer, Fiber and Carbohydrate amounts.");
+                case 6: // Sort by Manufacturer and grams of fiber.
+                    Console.WriteLine("Here you will be able to choose cereals by Manufacturer and Fiber amounts.");
 
-                    var query2 = QueryManuFiCa();
+                    var query2 = QueryManuFiber();
                     Console.WriteLine("\nHere comes the results of your query:");
                     Console.WriteLine($"We found {query2.Count()} matches.");
 
@@ -193,7 +193,7 @@ public class InputController(DataContext context)
         return queryStart;
     }
 
-    public IQueryable<CerealData> QueryManuFiCa()
+    public IQueryable<CerealData> QueryManuFiber()
     {
         var queryStart = _context.Cereals.AsQueryable();
         // Manufacturer
@@ -213,14 +213,34 @@ public class InputController(DataContext context)
         // Fiber grams
         Console.WriteLine("How many grams of Fiber do you want to intake?");
         Console.WriteLine($"Dataset has range from {_context.Cereals.Min(c => c.Fiber)} to {_context.Cereals.Max(c => c.Fiber)}");
+        Console.WriteLine("\tType 1 if looking for smaller amount.\n\tType 2 if looking for bigger amount.");
+        string fiberInput = Console.ReadLine();
 
-//Dataset has range from 0 to 14
 
-        // Carbs grams of complex carbohydrates
-Console.WriteLine("How many grams of Carbohydrates do you want to intake?");
-        Console.WriteLine($"Dataset has range from {_context.Cereals.Min(c => c.Carbo)} to {_context.Cereals.Max(c => c.Carbo)}");
 
-//Dataset has range from 0 to 23
+        if (!String.IsNullOrEmpty(fiberInput) && int.TryParse(fiberInput, out int choice))
+        {
+            if (choice == 1)
+            {
+                queryStart = queryStart.Where(c => c.Fiber >= 0 && c.Fiber <= 2);
+            }
+            else if (choice == 2)
+            {
+                queryStart = queryStart.Where(c => c.Fiber > 2);
+            }
+            else
+            {
+                Console.WriteLine("Invalid input. Please enter 1 or 2.");
+            }
+        }
+
+        //Dataset has range from 0 to 14
+        // small 0-2 , big 3-14 to have more options
+
+
+
+
+
 
         return queryStart;
     }
